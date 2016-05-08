@@ -29,11 +29,17 @@
                 </md-card-title-text>
             </md-card-title>
 
-            <md-card-actions layout="row" layout-align="end center">
+            <md-card-actions layout="row" layout-align="end center"
+                             ng-show="!waterCtl.isWatering">
                 <md-button ng-click="waterCtl.waterFor(20)" class="md-raised md-primary">water for 20s</md-button>
                 <md-button ng-click="waterCtl.waterFor(60)" class="md-raised md-primary">water for 60s</md-button>
                 <md-button ng-click="waterCtl.waterFor(180)" class="md-raised md-primary">water for 180s</md-button>
             </md-card-actions>
+
+            <div ng-show="waterCtl.isWatering"
+                 class="md-padding">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
 
         </md-card>
 
@@ -43,10 +49,8 @@
                     <span class="md-headline">Diagnosis</span>
                 </md-card-title-text>
             </md-card-title>
-
-            <div>
-                count: {{waterCtl.count}}
-                error: {{waterCtl.isError}} {{waterCtl.error}}
+            <div class="md-padding">
+                {{waterCtl.error}}
             </div>
         </md-card>
 
@@ -78,16 +82,22 @@
         self.mode = "none";
         self.isError = false;
 
+        self.isWatering = false;
+
         self.baseurl = "http://" + $location.host() + ":8087/";
 
         self.waterFor = function (duration) {
+            self.isWatering = true;
+
             $http.get(self.baseurl + "water/" + duration)
                     .then(function successCallback(response) {
                         self.error = response.data;
                         self.isError = false;
+                        self.isWatering = false;
                     }, function errorCallback(response) {
                         self.error = response;
                         self.isError = true;
+                        self.isWatering = false;
                     });
         }
     });
