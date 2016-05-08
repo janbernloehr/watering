@@ -9,7 +9,8 @@
 
     <title>Watering</title>
 
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <link rel="stylesheet"
+          href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
     <style type="text/css">
         * {
@@ -20,21 +21,36 @@
 </head>
 <body ng-controller="WateringController as waterCtl">
 <div>
-    <md-content>
-        <h1>Watering v0.1</h1>
+    <md-content class="md-padding">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Watering v0.1</span>
+                </md-card-title-text>
+            </md-card-title>
 
-        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-            <md-button ng-click="waterCtl.waterFor(20)" class="md-raised md-primary">water for 20s</md-button>
-            <md-button ng-click="waterCtl.waterFor(60)" class="md-raised md-primary">water for 60s</md-button>
-            <md-button ng-click="waterCtl.waterFor(180)" class="md-raised md-primary">water for 180s</md-button>
-        </section>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="waterCtl.waterFor(20)" class="md-raised md-primary">water for 20s</md-button>
+                <md-button ng-click="waterCtl.waterFor(60)" class="md-raised md-primary">water for 60s</md-button>
+                <md-button ng-click="waterCtl.waterFor(180)" class="md-raised md-primary">water for 180s</md-button>
+            </md-card-actions>
 
-        <div>
-            count: {{waterCtl.count}}
-            error: {{waterCtl.isError}} {{waterCtl.error}}
-        </div>
+        </md-card>
 
-        </md-content>
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Diagnosis</span>
+                </md-card-title-text>
+            </md-card-title>
+
+            <div>
+                count: {{waterCtl.count}}
+                error: {{waterCtl.isError}} {{waterCtl.error}}
+            </div>
+        </md-card>
+
+    </md-content>
 
 </div>
 
@@ -64,9 +80,8 @@
 
         self.baseurl = "http://" + $location.host() + ":8087/";
 
-        self.waterFor = function(duration)
-        {
-            $http.get(self.baseurl+"water/"+duration)
+        self.waterFor = function (duration) {
+            $http.get(self.baseurl + "water/" + duration)
                     .then(function successCallback(response) {
                         self.error = response.data;
                         self.isError = false;
