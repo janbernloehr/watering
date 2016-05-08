@@ -30,13 +30,15 @@
             </md-card-title>
 
             <md-card-actions layout="row" layout-sm="column" layout-align="center center" layout-wrap
-                             ng-show="!waterCtl.isWatering">
+                             ng-show="!waterCtl.isWatering"
+                             class="md-padding">
                 <md-button ng-click="waterCtl.waterFor(20)" class="md-raised md-primary">water for 20s</md-button>
                 <md-button ng-click="waterCtl.waterFor(60)" class="md-raised md-primary">water for 60s</md-button>
                 <md-button ng-click="waterCtl.waterFor(180)" class="md-raised md-primary">water for 180s</md-button>
             </md-card-actions>
 
             <div ng-show="waterCtl.isWatering"
+                    layout="row" layout-sm="column" layout-align="space-around"
                  class="md-padding">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
             </div>
@@ -71,6 +73,12 @@
 <script type="text/javascript">
 
     var app = angular.module('wateringApp', ['ngMaterial']);
+
+    app.config(function($mdThemingProvider) {
+        $mdThemingProvider.theme('default')
+                .primaryPalette('blue')
+                .accentPalette('red');
+    })
 
     app.controller('WateringController', function ($http, $scope, $location) {
 
