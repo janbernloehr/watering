@@ -18,31 +18,24 @@
         }
     </style>
 </head>
-<body>
-<div class="container" ng-controller="WateringController as waterCtl">
-    <h1>Watering v0.1</h1>
+<body ng-controller="WateringController as waterCtl">
+<div>
+    <md-content>
+        <h1>Watering v0.1</h1>
 
-    <div class="control-group">
-        <button ng-click="waterCtl.waterFor(20)" class="btn btn-primary btn-block">
-            water for 20s
-        </button>
-        <button ng-click="waterCtl.waterFor(60)" class="btn btn-primary btn-block">
-            water for 60s
-        </button>
-        <button ng-click="waterCtl.waterFor(180)" class="btn btn-primary btn-block">
-            water for 180s
-        </button>
-    </div>
+        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+            <md-button ng-click="waterCtl.waterFor(20)" class="md-raised md-primary">water for 20s</md-button>
+            <md-button ng-click="waterCtl.waterFor(60)" class="md-raised md-primary">water for 60s</md-button>
+            <md-button ng-click="waterCtl.waterFor(180)" class="md-raised md-primary">water for 180s</md-button>
+        </section>
 
-    <div>
-        count: {{waterCtl.count}}
-        error: {{waterCtl.isError}} {{waterCtl.error}}
-    </div>
+        <div>
+            count: {{waterCtl.count}}
+            error: {{waterCtl.isError}} {{waterCtl.error}}
+        </div>
 
-    <div>
-        local status: {{waterCtl.local_status}}<br />
-        remote status: {{waterCtl.remote_status}}
-    </div>
+        </md-content>
+
 </div>
 
 
