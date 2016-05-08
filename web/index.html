@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="wateringApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+
+    <title>Watering</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="bower_components/ngtouch/build/ngTouch.min.js"></script>
+    <script type="text/javascript">
+
+        var app = angular.module('wateringApp', ["ngTouch"]);
+
+        app.controller('WateringController', function ($http, $scope, $location) {
+
+            var self = this;
+            self.count = 0;
+            self.local_status = "initialized";
+            self.remote_status = "none";
+            self.error = "";
+            self.mode = "none";
+            self.isError = false;
+
+            self.baseurl = "http://" + $location.host() + ":8087/";
+
+            self.waterFor = function(duration)
+            {
+                $http.get(self.baseurl+"water/"+duration)
+                        .then(function successCallback(response) {
+                            self.error = response.data;
+                            self.isError = false;
+                        }, function errorCallback(response) {
+                            self.error = response;
+                            self.isError = true;
+                        });
+            }
+        });
+
+    </script>
+
+    <style type="text/css">
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+        }
+    </style>
+</head>
+<body>
+<div class="container" ng-controller="WateringController as waterCtl">
+    <h1>Watering v0.1</h1>
+
+    <div class="control-group">
+        <button ng-click="waterCtl.waterFor(20)" class="btn btn-primary btn-block">
+            water for 20s
+        </button>
+        <button ng-click="waterCtl.waterFor(60)" class="btn btn-primary btn-block">
+            water for 60s
+        </button>
+        <button ng-click="waterCtl.waterFor(180)" class="btn btn-primary btn-block">
+            water for 180s
+        </button>
+    </div>
+
+    <div>
+        count: {{waterCtl.count}}
+        error: {{waterCtl.isError}} {{waterCtl.error}}
+    </div>
+
+    <div>
+        local status: {{waterCtl.local_status}}<br />
+        remote status: {{waterCtl.remote_status}}
+    </div>
+</div>
+</body>
+
+</html>
