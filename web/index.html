@@ -9,41 +9,7 @@
 
     <title>Watering</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
-    <!--<script src="bower_components/ngtouch/build/ngTouch.min.js"></script>-->
-    <script type="text/javascript">
-
-        var app = angular.module('wateringApp');
-
-        app.controller('WateringController', function ($http, $scope, $location) {
-
-            var self = this;
-            self.count = 0;
-            self.local_status = "initialized";
-            self.remote_status = "none";
-            self.error = "";
-            self.mode = "none";
-            self.isError = false;
-
-            self.baseurl = "http://" + $location.host() + ":8087/";
-
-            self.waterFor = function(duration)
-            {
-                $http.get(self.baseurl+"water/"+duration)
-                        .then(function successCallback(response) {
-                            self.error = response.data;
-                            self.isError = false;
-                        }, function errorCallback(response) {
-                            self.error = response;
-                            self.isError = true;
-                        });
-            }
-        });
-
-    </script>
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
     <style type="text/css">
         * {
@@ -78,6 +44,48 @@
         remote status: {{waterCtl.remote_status}}
     </div>
 </div>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+
+<!-- Angular Material Library -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+
+<script type="text/javascript">
+
+    var app = angular.module('wateringApp', ['ngMaterial']);
+
+    app.controller('WateringController', function ($http, $scope, $location) {
+
+        var self = this;
+        self.count = 0;
+        self.local_status = "initialized";
+        self.remote_status = "none";
+        self.error = "";
+        self.mode = "none";
+        self.isError = false;
+
+        self.baseurl = "http://" + $location.host() + ":8087/";
+
+        self.waterFor = function(duration)
+        {
+            $http.get(self.baseurl+"water/"+duration)
+                    .then(function successCallback(response) {
+                        self.error = response.data;
+                        self.isError = false;
+                    }, function errorCallback(response) {
+                        self.error = response;
+                        self.isError = true;
+                    });
+        }
+    });
+
+</script>
+
 </body>
 
 </html>
