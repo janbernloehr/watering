@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from time import sleep
 import wiringpi2 as wiringpi
 
