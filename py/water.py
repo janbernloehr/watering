@@ -8,6 +8,11 @@ import wiringpi as wiringpi
 import json
 import falcon
 
+# data stuff
+import dataset
+from datetime import date, datetime, timedelta
+
+# constants
 WATERING = 1
 
 INPUT = 0
@@ -21,24 +26,110 @@ PWM_TONE_OUTPUT = 6
 LOW = 0
 HIGH = 1
 
+s_to_ml_factor = 250.0/20.0 # 20s == 250ml
 
-def water_all(duration):
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError('Not sure how to serialize %s' % (obj,))
+
+
+def water_all(duration, username):
     wiringpi.digitalWrite(WATERING, HIGH)
 
-    sleep(duration)
+    try:
+        sleep(duration)
 
-    wiringpi.digitalWrite(WATERING, LOW)
+        db = dataset.connect('sqlite:///mydatabase.db')
+
+        db_waterings = db['waterings']
+        db_waterings.insert(dict(waterdate=datetime.utcnow(), user=username, quantity=s_to_ml_factor*duration))
+
+    finally:
+        wiringpi.digitalWrite(WATERING, LOW)
+
+
+def record_filling(volume, username):
+    db = dataset.connect('sqlite:///mydatabase.db')
+
+    db_fillings = db['fillings']
+    db_fillings.insert(dict(waterdate=datetime.utcnow(), user=username, quantity=volume))
+
+
+def get_history():
+    db = dataset.connect('sqlite:///mydatabase.db')
+
+    db_fillings = db['fillings']
+
+    last_filling = db_fillings.find_one(order_by='-filldate', _limit=1)
+
+    db_waterings = db['waterings']
+
+    recent_waterings = db_waterings.find(db_waterings.table.columns.waterdate >= last_filling['filldate'], order_by='waterdate')
+
+    lst = []
+    total = last_filling['quantity']
+    taken = 0
+
+    for x in recent_waterings:
+        taken += x['quantity']
+        lst.append({
+            'waterdate': x['waterdate'],
+            'user': x['user'],
+            'quantity': x['quantity']
+        })
+
+    return json.dumps({
+            'last_filling': last_filling,
+            'remaining' : total-taken,
+            'history': lst
+        }, default=json_serial)
 
 
 def start_this_app():
+    # we use the wiring pi schema
     wiringpi.wiringPiSetup()
 
+    # set the watering port to output
     wiringpi.pinMode(WATERING, OUTPUT)
+
+    # to start with a clean state
+    wiringpi.digitalWrite(WATERING, LOW)
 
 
 class DoWatering:
     def on_get(self, req, resp, duration):
-        water_all(int(duration))
+        water_all(int(duration), 'Jan')
+        origin = req.get_header('Origin')
+        resp.set_header('Access-Control-Allow-Origin', origin)
+        resp.body = json.dumps({
+            'action': 'water',
+            'duration': duration
+        })
+        resp.status = falcon.HTTP_200
+
+
+class RecordFilling:
+    def on_get(self, req, resp, volume):
+        record_filling(int(volume), 'Jan')
+
+        origin = req.get_header('Origin')
+
+        resp.set_header('Access-Control-Allow-Origin', origin)
+        resp.body = json.dumps({
+            'action': 'record_filling',
+            'volume': volume
+        })
+        resp.status = falcon.HTTP_200
+
+
+class GetHistory:
+    def on_get(self, req, resp, duration):
+        water_all(int(duration), 'Jan')
         origin = req.get_header('Origin')
         resp.set_header('Access-Control-Allow-Origin', origin)
         resp.body = json.dumps({
@@ -55,3 +146,5 @@ start_this_app()
 app = falcon.API()
 
 app.add_route('/watering.api/water/{duration}', DoWatering())
+app.add_route('/watering.api/fill/{volume}', RecordFilling())
+app.add_route('/watering.api/history', GetHistory())
