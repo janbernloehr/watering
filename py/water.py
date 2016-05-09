@@ -128,14 +128,11 @@ class RecordFilling:
 
 
 class GetHistory:
-    def on_get(self, req, resp, duration):
-        water_all(int(duration), 'Jan')
+    def on_get(self, req, resp):
+
         origin = req.get_header('Origin')
         resp.set_header('Access-Control-Allow-Origin', origin)
-        resp.body = json.dumps({
-            'status': 'water',
-            'time': duration
-        })
+        resp.body = get_history()
         resp.status = falcon.HTTP_200
 
 
