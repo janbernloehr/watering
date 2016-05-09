@@ -48,11 +48,33 @@
         <md-card>
             <md-card-title>
                 <md-card-title-text>
-                    <span class="md-headline">History</span>
+                    <span class="md-headline">Waterings</span>
                 </md-card-title-text>
             </md-card-title>
             <div class="md-padding">
-                {{waterCtl.error}}
+                <md-list>
+                    <md-list-item class="md-3-line" ng-repeat="model in waterCtl.history.history">
+                        <div class="md-list-item-text">
+                            <h3>{{model.quantity}} ml</h3>
+                            <p>{{model.waterdate}}</p>
+                        </div>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </md-card>
+
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Last refill</span>
+                </md-card-title-text>
+            </md-card-title>
+            <div class="md-padding">
+                {{waterCtl.history.last_filling.filldate}}
+            </div>
+            <div class="md-padding">
+                <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}" maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear>
             </div>
         </md-card>
 
@@ -63,13 +85,7 @@
                 </md-card-title-text>
             </md-card-title>
             <div class="md-padding">
-                Last Refill {{waterCtl.history.last_filling.filldate}}<br />
-                Fill {{waterCtl.history.remaining}}/{{waterCtl.history.last_filling.quantity}}ml
-            </div>
-            <div class="md-padding">
-                <div ng-repeat="model in waterCtl.history.history">
-                    {{model.waterdate}} {{model.quantity}}
-                </div>
+                {{waterCtl.error}}
             </div>
         </md-card>
 
