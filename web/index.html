@@ -32,9 +32,10 @@
             <md-card-actions layout="row" layout-sm="column" layout-align="center center" layout-wrap
                              ng-show="!waterCtl.isWatering"
                              class="md-padding">
-                <md-button ng-click="waterCtl.waterFor(20)" class="md-raised md-primary">water for 20s</md-button>
-                <md-button ng-click="waterCtl.waterFor(60)" class="md-raised md-primary">water for 60s</md-button>
-                <md-button ng-click="waterCtl.waterFor(180)" class="md-raised md-primary">water for 180s</md-button>
+                <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
+                <md-button ng-click="waterCtl.waterFor(250)" class="md-raised md-primary">water 250ml</md-button>
+                <md-button ng-click="waterCtl.waterFor(500)" class="md-raised md-primary">water 500ml</md-button>
+                <md-button ng-click="waterCtl.waterFor(1000)" class="md-raised md-primary">water 1000ml</md-button>
             </md-card-actions>
 
             <div ng-show="waterCtl.isWatering"
@@ -42,7 +43,17 @@
                  class="md-padding">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
             </div>
+        </md-card>
 
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">History</span>
+                </md-card-title-text>
+            </md-card-title>
+            <div class="md-padding">
+                {{waterCtl.error}}
+            </div>
         </md-card>
 
         <md-card>
@@ -52,7 +63,13 @@
                 </md-card-title-text>
             </md-card-title>
             <div class="md-padding">
-                {{waterCtl.error}}
+                Last Refill {{waterCtl.history.last_filling.filldate}}<br />
+                Fill {{waterCtl.history.remaining}}/{{waterCtl.history.last_filling.quantity}}ml
+            </div>
+            <div class="md-padding">
+                <div ng-repeat="model in waterCtl.history.history">
+                    {{model.waterdate}} {{model.quantity}}
+                </div>
             </div>
         </md-card>
 
@@ -108,6 +125,13 @@
                         self.isWatering = false;
                     });
         }
+
+        $http.get(self.baseurl + "history")
+                .then(function successCallback(response) {
+                    self.history = response.data;
+                }, function errorCallback(response) {
+                    self.error = response;
+                });
     });
 
 </script>
