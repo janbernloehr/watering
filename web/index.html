@@ -56,7 +56,7 @@
                     <md-list-item class="md-3-line" ng-repeat="model in waterCtl.history.history">
                         <div class="md-list-item-text">
                             <h3>{{model.quantity}} ml</h3>
-                            <p>{{model.waterdate}}</p>
+                            <p>{{model.waterdate | momentFromNow}}</p>
                         </div>
                         <md-divider ng-if="!$last"></md-divider>
                     </md-list-item>
@@ -112,7 +112,13 @@
         $mdThemingProvider.theme('default')
                 .primaryPalette('blue')
                 .accentPalette('red');
-    })
+    });
+
+    app.filter("momentFromNow", function () {
+                return function (input) {
+                    return moment(input).fromNow();
+                }
+            });
 
     app.controller('WateringController', function ($http, $scope, $location) {
 
@@ -141,7 +147,7 @@
                         self.isError = true;
                         self.isWatering = false;
                     });
-        }
+        };
 
         $http.get(self.baseurl + "history")
                 .then(function successCallback(response) {
