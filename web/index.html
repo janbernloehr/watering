@@ -71,7 +71,7 @@
                 </md-card-title-text>
             </md-card-title>
             <div class="md-padding">
-                {{waterCtl.history.last_filling.filldate}}
+                {{moment(waterCtl.history.last_filling.filldate).fromNow()}}
             </div>
             <div class="md-padding">
                 <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}" maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear>
@@ -102,6 +102,7 @@
 <!-- Angular Material Library -->
 <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
 
 <script type="text/javascript">
 
