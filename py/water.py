@@ -42,8 +42,8 @@ class DoWatering:
         origin = req.get_header('Origin')
         resp.set_header('Access-Control-Allow-Origin', origin)
         resp.body = json.dumps({
-            'status': 'watering',
-            'thrust': duration
+            'status': 'water',
+            'time': duration
         })
         resp.status = falcon.HTTP_200
 
@@ -54,4 +54,4 @@ start_this_app()
 # Start Web
 app = falcon.API()
 
-app.add_route('/water/{duration}', DoWatering())
+app.add_route('/watering.api/water/{duration}', DoWatering())
