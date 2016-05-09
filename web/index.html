@@ -116,7 +116,7 @@
 
     app.filter("momentFromNow", function () {
                 return function (input) {
-                    return moment(input + " UTC").fromNow();
+                    return moment().utc(input).local().fromNow();
                 }
             });
 
