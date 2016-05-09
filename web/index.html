@@ -22,28 +22,27 @@
 <body ng-controller="WateringController as waterCtl">
 <div>
     <md-content class="md-padding">
-        <md-card>
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-headline">Watering v0.1</span>
-                </md-card-title-text>
-            </md-card-title>
+        <md-toolbar class="md-theme-light">
+            <h2 class="md-toolbar-tools">
+                <span>Watering v0.1</span>
+            </h2>
+        </md-toolbar>
 
-            <md-card-actions layout="row" layout-sm="column" layout-align="center center" layout-wrap
-                             ng-show="!waterCtl.isWatering"
-                             class="md-padding">
+        <md-content>
+            <section layout="row" layout-sm="column" layout-align="center center" layout-wrap
+                     ng-show="!waterCtl.isWatering">
                 <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
                 <md-button ng-click="waterCtl.waterFor(250)" class="md-raised md-primary">water 250ml</md-button>
                 <md-button ng-click="waterCtl.waterFor(500)" class="md-raised md-primary">water 500ml</md-button>
                 <md-button ng-click="waterCtl.waterFor(1000)" class="md-raised md-primary">water 1000ml</md-button>
-            </md-card-actions>
+            </section>
 
             <div ng-show="waterCtl.isWatering"
-                    layout="row" layout-sm="column" layout-align="space-around"
+                 layout="row" layout-sm="column" layout-align="space-around"
                  class="md-padding">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
             </div>
-        </md-card>
+        </md-content>
 
         <md-toolbar class="md-theme-light">
             <h2 class="md-toolbar-tools">
@@ -51,53 +50,49 @@
             </h2>
         </md-toolbar>
         <md-content>
-                <md-list>
-                    <md-subheader class="md-no-sticky">Waterings</md-subheader>
+            <md-list>
+                <md-subheader class="md-no-sticky">Waterings</md-subheader>
 
-                    <md-list-item class="md-2-line" ng-repeat="model in waterCtl.history.history">
-                        <div class="md-list-item-text">
-                            <h3>{{model.quantity}} ml</h3>
-                            <p>{{model.waterdate | momentFromNow}}</p>
-                        </div>
-                    </md-list-item>
+                <md-list-item class="md-2-line" ng-repeat="model in waterCtl.history.history">
+                    <div class="md-list-item-text">
+                        <h3>{{model.quantity}} ml</h3>
+                        <p>{{model.waterdate | momentFromNow}}</p>
+                    </div>
+                </md-list-item>
 
-                    <md-divider></md-divider>
+                <md-divider></md-divider>
 
-                    <md-subheader class="md-no-sticky">Last refill</md-subheader>
+                <md-subheader class="md-no-sticky">Last refill</md-subheader>
 
-                    <md-list-item class="md-2-line">
-                        <div class="md-list-item-text">
-                            <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
-                            <p><md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}" maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear></p>
-                        </div>
-                    </md-list-item>
-                </md-list>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
+                        <p>
+                            <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}"
+                                                maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear>
+                        </p>
+                    </div>
+                </md-list-item>
+            </md-list>
         </md-content>
 
-        <md-card>
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-headline">Last refill</span>
-                </md-card-title-text>
-            </md-card-title>
-            <div class="md-padding">
-                {{waterCtl.history.last_filling.filldate | momentFromNow}}
-            </div>
-            <div class="md-padding">
-                <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}" maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear>
-            </div>
-        </md-card>
+        <md-toolbar class="md-theme-light">
+            <h2 class="md-toolbar-tools">
+                <span>Diagnostics</span>
+            </h2>
+        </md-toolbar>
 
-        <md-card>
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-headline">Diagnosis</span>
-                </md-card-title-text>
-            </md-card-title>
-            <div class="md-padding">
-                {{waterCtl.error}}
-            </div>
-        </md-card>
+        <md-content>
+            <md-list>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text">
+                        <p>
+                            {{waterCtl.error}}
+                        </p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
 
     </md-content>
 
@@ -118,17 +113,17 @@
 
     var app = angular.module('wateringApp', ['ngMaterial']);
 
-    app.config(function($mdThemingProvider) {
+    app.config(function ($mdThemingProvider) {
         $mdThemingProvider.theme('default')
                 .primaryPalette('blue')
                 .accentPalette('red');
     });
 
     app.filter("momentFromNow", function () {
-                return function (input) {
-                    return moment().utc(input).fromNow();
-                }
-            });
+        return function (input) {
+            return moment().utc(input).fromNow();
+        }
+    });
 
     app.controller('WateringController', function ($http, $scope, $location) {
 
