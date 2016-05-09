@@ -71,7 +71,7 @@
                 </md-card-title-text>
             </md-card-title>
             <div class="md-padding">
-                {{moment(waterCtl.history.last_filling.filldate).fromNow()}}
+                {{waterCtl.history.last_filling.filldate | momentFromNow}}
             </div>
             <div class="md-padding">
                 <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}" maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear>
@@ -116,7 +116,7 @@
 
     app.filter("momentFromNow", function () {
                 return function (input) {
-                    return moment(input).fromNow();
+                    return moment(input + " UTC").fromNow();
                 }
             });
 
