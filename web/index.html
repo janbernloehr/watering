@@ -122,7 +122,7 @@
 
     app.filter("momentFromNow", function () {
         return function (input) {
-            return moment(input+"+00:00").utc();
+            return moment(input+"+00:00").fromLocal();
         }
     });
 
