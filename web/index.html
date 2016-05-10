@@ -19,7 +19,7 @@
         }
     </style>
 </head>
-<body ng-controller="WateringController as waterCtl">
+<body ng-controller="WateringController as waterCtl" ng-cloak>
 <div>
     <md-content class="md-padding">
         <md-toolbar class="md-theme-light">
@@ -68,6 +68,7 @@
                     <div class="md-list-item-text">
                         <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
                         <p>
+                            {{waterCtl.history.last_filling.filldate}}<br/>
                             <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining}}"
                                                 maximum="{{waterCtl.history.last_filling.quantity}}"></md-progress-linear>
                         </p>
