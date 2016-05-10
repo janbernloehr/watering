@@ -72,7 +72,7 @@ def get_history():
 
     db_waterings = db['waterings']
 
-    recent_waterings = db_waterings.find(db_waterings.table.columns.waterdate >= last_filling['filldate'], order_by='waterdate')
+    recent_waterings = db_waterings.find(db_waterings.table.columns.waterdate >= last_filling['filldate'], order_by='-waterdate')
 
     lst = []
     total = last_filling['quantity']
