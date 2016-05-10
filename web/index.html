@@ -21,7 +21,7 @@
 </head>
 <body ng-controller="WateringController as waterCtl" ng-cloak>
 <div>
-    <md-content class="md-padding">
+    <md-content >
         <md-toolbar class="md-theme-light">
             <h2 class="md-toolbar-tools">
                 <span>Watering v0.1</span>
@@ -30,7 +30,7 @@
 
         <md-content>
             <section layout="row" layout-sm="column" layout-align="center center" layout-wrap
-                     ng-show="!waterCtl.isWatering">
+                     ng-show="!waterCtl.isWatering" class="md-padding">
                 <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
                 <md-button ng-click="waterCtl.waterFor(250)" class="md-raised md-primary">water 250ml</md-button>
                 <md-button ng-click="waterCtl.waterFor(500)" class="md-raised md-primary">water 500ml</md-button>
