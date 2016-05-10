@@ -68,9 +68,8 @@
                     <div class="md-list-item-text">
                         <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
                         <p>
-                            {{waterCtl.history.remaining}}ml of {{waterCtl.history.last_filling.quantity}}ml remaining<br />
-                            {{waterCtl.history.remaining/waterCtl.history.last_filling.quantity}}<br/>
-                            <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/waterCtl.history.last_filling.quantity}}"
+                            {{waterCtl.history.remaining}}ml of 5000ml remaining<br />
+                            <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"
                                                 ></md-progress-linear>
                         </p>
                     </div>
