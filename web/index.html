@@ -121,7 +121,7 @@
 
     app.filter("momentFromNow", function () {
         return function (input) {
-            return moment().utc(input).fromNow();
+            return moment(input).fromNow();
         }
     });
 
