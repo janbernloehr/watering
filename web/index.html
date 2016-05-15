@@ -51,6 +51,24 @@
         </md-toolbar>
         <md-content>
             <md-list>
+
+                              <md-subheader class="md-no-sticky">Last refill</md-subheader>
+
+                              <md-list-item class="md-2-line">
+                                  <div class="md-list-item-text">
+                                      <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
+                                      <p>
+                                          {{waterCtl.history.remaining}}ml of 5000ml remaining<br />
+                                          <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"
+                                                              ></md-progress-linear>
+                                      </p>
+                                      <md-icon md-svg-icon="communication:messenger"
+                                      ng-click="waterCtl.recordRefill($event)"
+                                      aria-label="Set Refill" 
+                                      class="md-primary md-hue-3"></md-icon>
+                                  </div>
+                              </md-list-item>
+
                 <md-subheader class="md-no-sticky">Waterings</md-subheader>
 
                 <md-list-item class="md-2-line" ng-repeat="model in waterCtl.history.history">
@@ -62,18 +80,6 @@
 
                 <md-divider></md-divider>
 
-                <md-subheader class="md-no-sticky">Last refill</md-subheader>
-
-                <md-list-item class="md-2-line">
-                    <div class="md-list-item-text">
-                        <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
-                        <p>
-                            {{waterCtl.history.remaining}}ml of 5000ml remaining<br />
-                            <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"
-                                                ></md-progress-linear>
-                        </p>
-                    </div>
-                </md-list-item>
             </md-list>
         </md-content>
 
@@ -154,6 +160,17 @@
                         self.isWatering = false;
                     });
         };
+
+        self.recordRefill = function(event) {
+    $mdDialog.show(
+      $mdDialog.alert()
+        .title('Secondary Action')
+        .textContent('Secondary actions can be used for one click actions')
+        .ariaLabel('Secondary click demo')
+        .ok('Neat!')
+        .targetEvent(event)
+    );
+  };
 
         $http.get(self.baseurl + "history")
                 .then(function successCallback(response) {
