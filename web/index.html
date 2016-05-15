@@ -12,6 +12,8 @@
     <link rel="stylesheet"
           href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+
     <style type="text/css">
         * {
             -webkit-touch-callout: none;
@@ -62,7 +64,7 @@
                                           <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"
                                                               ></md-progress-linear>
                                       </p>
-                                      <md-icon md-svg-icon="communication:messenger"
+                                      <md-icon md-font-icon="icon-home"
                                       ng-click="waterCtl.recordRefill($event)"
                                       aria-label="Set Refill"
                                       class="md-primary md-hue-3"></md-icon>
