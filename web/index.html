@@ -64,7 +64,7 @@
                                       </p>
                                       <md-icon md-svg-icon="communication:messenger"
                                       ng-click="waterCtl.recordRefill($event)"
-                                      aria-label="Set Refill" 
+                                      aria-label="Set Refill"
                                       class="md-primary md-hue-3"></md-icon>
                                   </div>
                               </md-list-item>
@@ -128,7 +128,7 @@
 
     app.filter("momentFromNow", function () {
         return function (input) {
-            return moment(input+"+00:00").fromNow();
+            return moment(input+"Z").fromNow();
         }
     });
 
