@@ -1,191 +1,183 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="wateringApp">
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <title>Watering</title>
+  <title>Watering</title>
 
-    <link rel="stylesheet"
-          href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
-
-    <style type="text/css">
-        * {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none; /* Disable selection/copy in UIWebView */
-        }
-    </style>
+  <style type="text/css">
+    * {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      /* Disable selection/copy in UIWebView */
+    }
+  </style>
 </head>
+
 <body ng-controller="WateringController as waterCtl" ng-cloak>
-<div>
-    <md-content >
-        <md-toolbar class="md-theme-light">
-            <h2 class="md-toolbar-tools">
+  <div>
+    <md-content>
+      <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">
                 <span>Watering v0.1</span>
             </h2>
-        </md-toolbar>
+      </md-toolbar>
 
-        <md-content>
-            <section layout="row" layout-sm="column" layout-align="center center" layout-wrap
-                     ng-show="!waterCtl.isWatering" class="md-padding">
-                <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
-                <md-button ng-click="waterCtl.waterFor(250)" class="md-raised md-primary">water 250ml</md-button>
-                <md-button ng-click="waterCtl.waterFor(500)" class="md-raised md-primary">water 500ml</md-button>
-                <md-button ng-click="waterCtl.waterFor(1000)" class="md-raised md-primary">water 1000ml</md-button>
-            </section>
+      <md-content>
+        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap ng-show="!waterCtl.isWatering" class="md-padding">
+          <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
+          <md-button ng-click="waterCtl.waterFor(250)" class="md-raised md-primary">water 250ml</md-button>
+          <md-button ng-click="waterCtl.waterFor(500)" class="md-raised md-primary">water 500ml</md-button>
+          <md-button ng-click="waterCtl.waterFor(1000)" class="md-raised md-primary">water 1000ml</md-button>
+        </section>
 
-            <div ng-show="waterCtl.isWatering"
-                 layout="row" layout-sm="column" layout-align="space-around"
-                 class="md-padding">
-                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-            </div>
-        </md-content>
+        <div ng-show="waterCtl.isWatering" layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
+          <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+      </md-content>
 
-        <md-toolbar class="md-theme-light">
-            <h2 class="md-toolbar-tools">
+      <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">
                 <span>History</span>
             </h2>
-        </md-toolbar>
-        <md-content>
-            <md-list>
+      </md-toolbar>
+      <md-content>
+        <md-list>
 
-                              <md-subheader class="md-no-sticky">Last refill</md-subheader>
+          <md-subheader class="md-no-sticky">Last refill</md-subheader>
 
-                              <md-list-item class="md-2-line">
-                                  <div class="md-list-item-text">
-                                      <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
-                                      <p>
-                                          {{waterCtl.history.remaining}}ml of 5000ml remaining<br />
-                                          <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"
-                                                              ></md-progress-linear>
-                                      </p>
-                                      <md-icon md-font-icon="icon-home"
-                                      ng-click="waterCtl.recordRefill($event)"
-                                      aria-label="Set Refill"
-                                      class="md-primary md-hue-3"></md-icon>
-                                  </div>
-                              </md-list-item>
+          <md-list-item class="md-2-line">
+            <div class="md-list-item-text">
+              <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
+              <p>
+                {{waterCtl.history.remaining}}ml of 5000ml remaining
+                <br />
+                <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"></md-progress-linear>
+              </p>
+              <md-icon md-font-icon="icon-home" ng-click="waterCtl.recordRefill($event)" aria-label="Set Refill" class="md-primary md-hue-3"></md-icon>
+            </div>
+          </md-list-item>
 
-                <md-subheader class="md-no-sticky">Waterings</md-subheader>
+          <md-subheader class="md-no-sticky">Waterings</md-subheader>
 
-                <md-list-item class="md-2-line" ng-repeat="model in waterCtl.history.history">
-                    <div class="md-list-item-text">
-                        <h3>{{model.quantity}} ml</h3>
-                        <p>{{model.waterdate | momentFromNow}}</p>
-                    </div>
-                </md-list-item>
+          <md-list-item class="md-2-line" ng-repeat="model in waterCtl.history.history">
+            <div class="md-list-item-text">
+              <h3>{{model.quantity}} ml</h3>
+              <p>{{model.waterdate | momentFromNow}}</p>
+            </div>
+          </md-list-item>
 
-                <md-divider></md-divider>
+          <md-divider></md-divider>
 
-            </md-list>
-        </md-content>
+        </md-list>
+      </md-content>
 
-        <md-toolbar class="md-theme-light">
-            <h2 class="md-toolbar-tools">
+      <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">
                 <span>Diagnostics</span>
             </h2>
-        </md-toolbar>
+      </md-toolbar>
 
-        <md-content>
-            <md-list>
-                <md-list-item class="md-2-line">
-                    <div class="md-list-item-text">
-                        <p>
-                            {{waterCtl.error}}
-                        </p>
-                    </div>
-                </md-list-item>
-            </md-list>
-        </md-content>
+      <md-content>
+        <md-list>
+          <md-list-item class="md-2-line">
+            <div class="md-list-item-text">
+              <p>
+                {{waterCtl.error}}
+              </p>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-content>
 
     </md-content>
 
-</div>
+  </div>
 
 
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+  <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
 
-<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
 
-<!-- Angular Material Library -->
-<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
-
-<script type="text/javascript">
-
+  <script type="text/javascript">
     var app = angular.module('wateringApp', ['ngMaterial']);
 
-    app.config(function ($mdThemingProvider) {
-        $mdThemingProvider.theme('default')
-                .primaryPalette('blue')
-                .accentPalette('red');
+    app.config(function($mdThemingProvider) {
+      $mdThemingProvider.theme('default')
+        .primaryPalette('blue')
+        .accentPalette('red');
     });
 
-    app.filter("momentFromNow", function () {
-        return function (input) {
-            console.log(input+"Z");
-            return moment(input+"Z").fromNow();
-        }
+    app.filter("momentFromNow", function() {
+      return function(input) {
+        console.log(input + "Z");
+        return moment(input + "Z").fromNow();
+      }
     });
 
-    app.controller('WateringController', function ($http, $scope, $location, $mdDialog) {
+    app.controller('WateringController', function($http, $scope, $location, $mdDialog) {
 
-        var self = this;
-        self.count = 0;
-        self.local_status = "initialized";
-        self.remote_status = "none";
-        self.error = "";
-        self.mode = "none";
-        self.isError = false;
+      var self = this;
+      self.count = 0;
+      self.local_status = "initialized";
+      self.remote_status = "none";
+      self.error = "";
+      self.mode = "none";
+      self.isError = false;
 
-        self.isWatering = false;
+      self.isWatering = false;
 
-        self.baseurl = "/watering.api/";
+      self.baseurl = "/watering.api/";
 
-        self.waterFor = function (duration) {
-            self.isWatering = true;
+      self.waterFor = function(duration) {
+        self.isWatering = true;
 
-            $http.get(self.baseurl + "water/" + duration)
-                    .then(function successCallback(response) {
-                        self.error = response.data;
-                        self.isError = false;
-                        self.isWatering = false;
-                    }, function errorCallback(response) {
-                        self.error = response;
-                        self.isError = true;
-                        self.isWatering = false;
-                    });
-        };
+        $http.get(self.baseurl + "water/" + duration)
+          .then(function successCallback(response) {
+            self.error = response.data;
+            self.isError = false;
+            self.isWatering = false;
+          }, function errorCallback(response) {
+            self.error = response;
+            self.isError = true;
+            self.isWatering = false;
+          });
+      };
 
-        self.recordRefill = function(event) {
-    $mdDialog.show(
-      $mdDialog.alert()
-        .title('Secondary Action')
-        .textContent('Secondary actions can be used for one click actions')
-        .ariaLabel('Secondary click demo')
-        .ok('Neat!')
-        .targetEvent(event)
-    );
-  };
+      self.recordRefill = function(event) {
+        $mdDialog.show(
+          $mdDialog.alert()
+          .title('Secondary Action')
+          .textContent('Secondary actions can be used for one click actions')
+          .ariaLabel('Secondary click demo')
+          .ok('Neat!')
+          .targetEvent(event)
+        );
+      };
 
-        $http.get(self.baseurl + "history")
-                .then(function successCallback(response) {
-                    self.history = response.data;
-                }, function errorCallback(response) {
-                    self.error = response;
-                });
+      $http.get(self.baseurl + "history")
+        .then(function successCallback(response) {
+          self.history = response.data;
+        }, function errorCallback(response) {
+          self.error = response;
+        });
     });
-
-</script>
+  </script>
 
 </body>
 
