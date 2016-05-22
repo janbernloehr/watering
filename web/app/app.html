@@ -1,10 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+ <md-toolbar color="primary">
+        Watering v0.1
+    </md-toolbar>
 
-</body>
-</html>
+
+        <div>
+            <button ng-click="waterFor(100)" color="primary" md-raised-button md-primary>water 100ml</button>
+            <button ng-click="waterFor(250)" color="primary" md-raised-button md-primary>water 250ml</button>
+            <button ng-click="waterFor(500)" color="primary" md-raised-button md-primary>water 500ml</button>
+            <button ng-click="waterFor(1000)" color="primary" md-raised-button md-primary>water 1000ml</button>
+        </div>
+
+        <div ng-show="isWatering" layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
+            <md-progress-circle mode="indeterminate"></md-progress-circle>
+        </div>
+ <!--
+    <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">
+                <span>History</span>
+            </h2>
+    </md-toolbar>
+    <md-content>
+        <md-list>
+
+            <md-subheader class="md-no-sticky">Last refill</md-subheader>
+
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text">
+                    <h3>{{history.last_filling.filldate | momentFromNow}}</h3>
+                    <p>
+                        {{history.remaining}}ml of {{history.last_filling.quantity}}ml remaining
+                        <br />
+                        <md-progress-linear md-mode="determinate" value="{{history.remaining/5000*100}}"></md-progress-linear>
+                    </p>
+                    <md-icon md-font-icon="icon-home" ng-click="recordRefill($event)" aria-label="Set Refill" class="md-secondary md-hue-3"></md-icon>
+                </div>
+            </md-list-item>
+
+            <md-subheader class="md-no-sticky">Waterings</md-subheader>
+
+            <md-list-item class="md-2-line" ng-repeat="model in history.history">
+                <div class="md-list-item-text">
+                    <h3>{{model.quantity}} ml</h3>
+                    <p>{{model.waterdate | momentFromNow}}</p>
+                </div>
+            </md-list-item>
+
+            <md-divider></md-divider>
+
+        </md-list>
+    </md-content>
+
+    <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">
+                <span>Diagnostics</span>
+            </h2>
+    </md-toolbar>
+
+    <md-content>
+        <md-list>
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text">
+                    <p>
+                        {{error}}
+                    </p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+
+</md-content>-->
