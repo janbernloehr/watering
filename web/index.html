@@ -19,34 +19,49 @@
       -webkit-user-select: none;
       /* Disable selection/copy in UIWebView */
     }
-
+    
     .watering-app .appDemoFontIconsWithClassnames *:after {
-    box-sizing: border-box; }
-  .watering-app [class^="icon-"]:before,
-  .watering-app [class*=" icon-"]:before {
-    font-family: "icomoon";
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 1;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: inherit;
-    text-transform: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale; }
-  .watering-app .icon-home:before {
-    content: "\e900"; }
-  .watering-app .icon-clock:before {
-    content: "\e94e"; }
-  .watering-app .icon-user-plus:before {
-    content: "\e973"; }
-  .watering-app .icon-google-plus2:before {
-    content: "\ea89"; }
-  .watering-app .icon-youtube4:before {
-    content: "\ea9a"; }
-  .watering-app .icon-settings:before {
-    content: "\e600"; }
+      box-sizing: border-box;
+    }
+    
+    .watering-app [class^="icon-"]:before,
+    .watering-app [class*=" icon-"]:before {
+      font-family: "icomoon";
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+      font-weight: normal;
+      font-style: normal;
+      text-decoration: inherit;
+      text-transform: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .watering-app .icon-home:before {
+      content: "\e900";
+    }
+    
+    .watering-app .icon-clock:before {
+      content: "\e94e";
+    }
+    
+    .watering-app .icon-user-plus:before {
+      content: "\e973";
+    }
+    
+    .watering-app .icon-google-plus2:before {
+      content: "\ea89";
+    }
+    
+    .watering-app .icon-youtube4:before {
+      content: "\ea9a";
+    }
+    
+    .watering-app .icon-settings:before {
+      content: "\e600";
+    }
   </style>
 </head>
 
@@ -90,8 +105,7 @@
                 <br />
                 <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"></md-progress-linear>
               </p>
-              <md-icon md-font-icon="icon-home" ng-click="waterCtl.recordRefill($event)"
-                       aria-label="Set Refill" class="md-secondary md-hue-3"></md-icon>
+              <md-icon md-font-icon="icon-home" ng-click="waterCtl.recordRefill($event)" aria-label="Set Refill" class="md-secondary md-hue-3"></md-icon>
             </div>
           </md-list-item>
 
@@ -159,7 +173,7 @@
       }
     });
 
-    app.controller('WateringController', function($http, $scope, $location, $mdDialog) {
+    app.controller('WateringController', function($http, $scope, $location, $mdDialog, $mdMedia) {
 
       var self = this;
       self.count = 0;
@@ -181,6 +195,7 @@
             self.error = response.data;
             self.isError = false;
             self.isWatering = false;
+            self.getHistory();
           }, function errorCallback(response) {
             self.error = response;
             self.isError = true;
@@ -189,23 +204,54 @@
       };
 
       self.recordRefill = function(event) {
-        $mdDialog.show(
-          $mdDialog.alert()
-          .title('Secondary Action')
-          .textContent('Secondary actions can be used for one click actions')
-          .ariaLabel('Secondary click demo')
-          .ok('Neat!')
-          .targetEvent(event)
-        );
+        //var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'refill.dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: event,
+      clickOutsideToClose:true,
+      fullscreen: false
+    })
+    .then(function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }, function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    /*$scope.$watch(function() {
+      return $mdMedia('xs') || $mdMedia('sm');
+    }, function(wantsFullScreen) {
+      $scope.customFullscreen = (wantsFullScreen === true);
+    });*/
       };
-
-      $http.get(self.baseurl + "history")
+      
+      self.getHistory = function() {
+        $http.get(self.baseurl + "history")
         .then(function successCallback(response) {
           self.history = response.data;
         }, function errorCallback(response) {
           self.error = response;
         });
+      };
+      
+     
+      self.getHistory();
     });
+    
+    function DialogController($scope, $mdDialog) {
+      self = this;
+  $scope.hide = function() {
+    $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    $mdDialog.cancel();
+  };
+  $scope.answer = function(answer) {
+    $mdDialog.hide(answer);
+  };
+  self.title = "hello world"; 
+  self.refillVolume = 0;
+}
   </script>
 
 </body>
