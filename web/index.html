@@ -14,12 +14,6 @@
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
   <style type="text/css">
-    * {
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      /* Disable selection/copy in UIWebView */
-    }
-    
     .watering-app .appDemoFontIconsWithClassnames *:after {
       box-sizing: border-box;
     }
@@ -73,7 +67,7 @@
                 <span>Watering v0.1</span>
             </h2>
       </md-toolbar>
-
+      
       <md-content>
         <section layout="row" layout-sm="column" layout-align="center center" layout-wrap ng-show="!waterCtl.isWatering" class="md-padding">
           <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
@@ -89,7 +83,7 @@
 
       <md-toolbar class="md-theme-light">
         <h2 class="md-toolbar-tools">
-                <span>History</span>
+                <span>History {{hippo}}</span>
             </h2>
       </md-toolbar>
       <md-content>
@@ -146,10 +140,12 @@
   </div>
 
 
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
+  
   <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
 
   <!-- Angular Material Library -->
@@ -158,7 +154,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
 
   <script type="text/javascript">
-    var app = angular.module('wateringApp', ['ngMaterial']);
+    var app = angular.module('wateringApp', ['ngMaterial', 'ngMessages', 'material.svgAssetsCache']);
 
     app.config(function($mdThemingProvider) {
       $mdThemingProvider.theme('default')
@@ -173,9 +169,14 @@
       }
     });
 
-    app.controller('WateringController', function($http, $scope, $location, $mdDialog, $mdMedia) {
-
+    app.controller('WateringController', function($http, $scope, $rootScope, $location, $mdDialog, $mdMedia) {
+      
+      $rootScope.hippo = "happy";
+      
       var self = this;
+      
+      $rootScope.rx = self;
+      
       self.count = 0;
       self.local_status = "initialized";
       self.remote_status = "none";
@@ -234,11 +235,20 @@
         });
       };
       
-     
+      self.refill = function(volume) {
+        $http.get(self.baseurl + "refill/" + volume)
+        .then(function successCallback(response) {
+          self.getHistory();
+        }, function errorCallback(response) {
+          self.error = response;
+        });
+      
+      };
+      
       self.getHistory();
     });
     
-    function DialogController($scope, $mdDialog) {
+    function DialogController($scope, $mdDialog, $rootScope) {
       self = this;
   $scope.hide = function() {
     $mdDialog.hide();
@@ -246,11 +256,14 @@
   $scope.cancel = function() {
     $mdDialog.cancel();
   };
-  $scope.answer = function(answer) {
-    $mdDialog.hide(answer);
+  $scope.save = function() {
+    $rootScope.rx.refill($scope.bag.refillVolume);
+    
+    $mdDialog.hide();
   };
-  self.title = "hello world"; 
-  self.refillVolume = 0;
+  $scope.bag = {
+    refillVolume: null
+  };
 }
   </script>
 
