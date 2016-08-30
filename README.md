@@ -21,7 +21,25 @@ stdout_logfile=/var/log/watering.out.log
 
 /etc/nginx/sites-available/default
 ````
-location /watering/ {
+upstream app_server {
+    # fail_timeout=0 means we always retry an upstream even if it failed
+    # to return a good HTTP response
+
+    # for UNIX domain socket setups
+    #server unix:/tmp/gunicorn.sock fail_timeout=0;
+
+    # for a TCP configuration
+    server 127.0.0.1:8087 fail_timeout=0;
+  }
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	root /var/www/html;
+	index index.html;
+
+	location /watering/ {
 		alias /var/www/html/watering/;
 	}
 
@@ -35,4 +53,5 @@ location /watering/ {
 		proxy_read_timeout          3600;
 		send_timeout                3600;
         }
+}
 ````
