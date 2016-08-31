@@ -14,9 +14,7 @@ app.filter("momentFromNow", function () {
 });
 
 app.controller('WateringController', function ($http, $scope, $rootScope, $location, $mdDialog, $mdMedia) {
-
-    $rootScope.hippo = "happy";
-
+    
     var self = this;
 
     $rootScope.rx = self;
