@@ -14,7 +14,7 @@ Simple App for watering my balcony plants
 The python backend is run by gunicorn which is fired up by supervisor.
 
     sudo apt-get install python python-pip supervisor
-    sudo pip install gunicorn wiringpi
+    sudo pip install gunicorn falcon wiringpi
   
 
 `/etc/supervisor/conf.d/watering.conf` 
