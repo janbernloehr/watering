@@ -11,7 +11,7 @@ Simple App for watering my balcony plants
 
 ## Installation
 
-The python backend is fired up by supervisor.
+The python backend is run by gunicorn which is fired up by supervisor.
 
     sudo apt-get install python python-pip supervisor
     sudo pip install gunicorn
@@ -30,7 +30,7 @@ stderr_logfile=/var/log/watering.err.log
 stdout_logfile=/var/log/watering.out.log
 ````
 
-The angular frontend is served by nginx.
+The angular frontend and the REST interface run by gunicorn is served by nginx.
 
     sudo apt-get install nginx
     
