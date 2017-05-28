@@ -5,11 +5,11 @@ Simple App for watering my balcony plants
 - Python backend communicating with the hardware through wiringpi and exposing an REST api using falcon.
 - Angular frontend to water the plants and track how much water is left in the can.
 
-### The wiring
+## Wiring
 
 ![wiring](watering_wires_Steckplatine.png)
 
-### How do I get set up? ###
+## Installation
 
 The python backend is fired up by supervisor.
 
