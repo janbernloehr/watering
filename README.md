@@ -30,7 +30,7 @@ stderr_logfile=/var/log/watering.err.log
 stdout_logfile=/var/log/watering.out.log
 ````
 
-The angular frontend and the REST interface run by gunicorn is served by nginx.
+The angular frontend and the REST interface run by gunicorn are served by nginx.
 
     sudo apt-get install nginx
     
@@ -60,10 +60,10 @@ server {
 	}
 
 	location /watering.api/ {
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_redirect off;
-    proxy_pass http://app_server;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header Host $http_host;
+		proxy_redirect off;
+		proxy_pass http://app_server;
 		proxy_connect_timeout       3600;
 		proxy_send_timeout          3600;
 		proxy_read_timeout          3600;
