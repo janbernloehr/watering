@@ -1,13 +1,24 @@
 # Watering #
 
-Simple Watering App consisting of
-- Python deamon running in the background; using wiringpi to water
-- Web frontend built with angular material
+Simple App for watering my balcony plants
+
+- Python backend communicating with the hardware through wiringpi and exposing an REST api using falcon.
+- Angular frontend to water the plants and track how much water is left in the can.
+
+### The wiring
+
+![wiring](watering_wires_Steckplatine.png)
 
 ### How do I get set up? ###
 
+The python backend is fired up by supervisor.
 
-/etc/supervisor/conf.d/watering.conf 
+    sudo apt-get install python python-pip supervisor
+    sudo pip install gunicorn
+  
+
+`/etc/supervisor/conf.d/watering.conf` 
+
 ````
 [program:watering]
 command=/usr/local/bin/gunicorn -b '0.0.0.0:8087' --timeout 3600 water:app
@@ -19,7 +30,12 @@ stderr_logfile=/var/log/watering.err.log
 stdout_logfile=/var/log/watering.out.log
 ````
 
-/etc/nginx/sites-available/default
+The angular frontend is served by nginx.
+
+    sudo apt-get install nginx
+    
+`/etc/nginx/sites-available/default`
+
 ````
 upstream app_server {
     # fail_timeout=0 means we always retry an upstream even if it failed
@@ -44,14 +60,14 @@ server {
 	}
 
 	location /watering.api/ {
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header Host $http_host;
-                proxy_redirect off;
-                proxy_pass http://app_server;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_pass http://app_server;
 		proxy_connect_timeout       3600;
 		proxy_send_timeout          3600;
 		proxy_read_timeout          3600;
 		send_timeout                3600;
-        }
+  }
 }
 ````
