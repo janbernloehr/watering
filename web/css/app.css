@@ -1,0 +1,344 @@
+/* CSS Custom Properties */
+:root {
+  --primary: #1976d2;
+  --primary-dark: #1565c0;
+  --primary-light: #42a5f5;
+  --surface: #ffffff;
+  --background: #f5f5f5;
+  --text: #212121;
+  --text-secondary: #757575;
+  --border: #e0e0e0;
+  --success: #4caf50;
+  --error: #f44336;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --radius: 8px;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base */
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* App Container */
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+/* Toolbar */
+.toolbar {
+  background: var(--primary);
+  color: white;
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.toolbar h1, .toolbar h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.toolbar .version {
+  font-size: 0.875rem;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  margin: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+/* Button Grid */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+  .button-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--border);
+  color: var(--text);
+}
+
+.btn:hover {
+  filter: brightness(0.95);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: rgba(25, 118, 210, 0.1);
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  margin-bottom: 0;
+}
+
+/* Refill Info */
+.refill-info {
+  color: var(--text-secondary);
+}
+
+.refill-date {
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.refill-remaining {
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  width: 0;
+}
+
+/* History List */
+.history-list {
+  list-style: none;
+}
+
+.history-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-list li:last-child {
+  border-bottom: none;
+}
+
+.history-list .quantity {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.history-list .time {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.empty-state {
+  color: var(--text-secondary);
+  font-style: italic;
+  justify-content: center !important;
+}
+
+/* Status */
+.status {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.status.error {
+  color: var(--error);
+}
+
+.status.success {
+  color: var(--success);
+}
+
+/* Dialog */
+dialog {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  max-width: 90vw;
+  width: 320px;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+dialog h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
+dialog label {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+dialog label span {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+dialog input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+dialog input:focus {
+  border-color: var(--primary);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1e1e1e;
+    --background: #121212;
+    --text: #e0e0e0;
+    --text-secondary: #9e9e9e;
+    --border: #333333;
+  }
+
+  .toolbar {
+    background: #1565c0;
+  }
+
+  dialog {
+    background: var(--surface);
+  }
+}

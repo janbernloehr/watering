@@ -124,9 +124,6 @@ docstring-code-format = true
 [tool.ty.environment]
 python-version = "3.12"
 
-[tool.ty.rules]
-unresolved-import = "ignore"
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
