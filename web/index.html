@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#1976d2">
+  <meta name="description" content="Smart plant watering control">
 
   <title>Watering</title>
 
+  <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon-iphone.png">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/app.css">
@@ -18,16 +21,28 @@
   <div class="app">
     <!-- Header -->
     <header class="toolbar">
-      <h1>Watering <span class="version">v0.3.0</span></h1>
+      <h1>🌱 Watering</h1>
     </header>
 
-    <!-- Watering Controls -->
-    <section class="card">
+    <!-- Watering Controls - Primary action area at top for thumb reach -->
+    <section class="card controls-card">
       <div id="controls" class="button-grid">
-        <button class="btn btn-primary" data-volume="100">100ml</button>
-        <button class="btn btn-primary" data-volume="250">250ml</button>
-        <button class="btn btn-primary" data-volume="500">500ml</button>
-        <button class="btn btn-primary" data-volume="1000">1000ml</button>
+        <button class="btn btn-primary btn-water" data-volume="100">
+          <span class="btn-volume">100</span>
+          <span class="btn-unit">ml</span>
+        </button>
+        <button class="btn btn-primary btn-water" data-volume="250">
+          <span class="btn-volume">250</span>
+          <span class="btn-unit">ml</span>
+        </button>
+        <button class="btn btn-primary btn-water" data-volume="500">
+          <span class="btn-volume">500</span>
+          <span class="btn-unit">ml</span>
+        </button>
+        <button class="btn btn-primary btn-water" data-volume="1000">
+          <span class="btn-volume">1000</span>
+          <span class="btn-unit">ml</span>
+        </button>
       </div>
       <div id="loading" class="loading hidden">
         <div class="spinner"></div>
@@ -35,57 +50,60 @@
       </div>
     </section>
 
-    <!-- History Section -->
-    <header class="toolbar">
-      <h2>History</h2>
-    </header>
-
-    <section class="card">
-      <div class="section-header">
-        <h3>Last Refill</h3>
-        <button id="refill-btn" class="btn-icon" title="Record refill">
-          <svg viewBox="0 0 24 24" width="24" height="24">
-            <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+    <!-- Tank Status - Visual water level -->
+    <section class="card tank-card">
+      <div class="tank-header">
+        <h2>Water Tank</h2>
+        <button id="refill-btn" class="btn-fab" title="Record refill" aria-label="Record refill">
+          <svg viewBox="0 0 24 24" width="28" height="28">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
           </svg>
         </button>
       </div>
-      <div id="last-refill" class="refill-info">
-        <p class="refill-date">Loading...</p>
-        <p class="refill-remaining"></p>
-        <div class="progress-bar">
-          <div id="progress-fill" class="progress-fill"></div>
+      <div id="tank-status" class="tank-status">
+        <div class="tank-visual">
+          <div id="tank-fill" class="tank-fill"></div>
+          <div class="tank-level" id="tank-level">--</div>
+        </div>
+        <div class="tank-info">
+          <p class="tank-remaining" id="tank-remaining">Loading...</p>
+          <p class="tank-date" id="tank-date"></p>
         </div>
       </div>
     </section>
 
+    <!-- Recent Activity -->
     <section class="card">
-      <h3>Recent Waterings</h3>
+      <h2>Recent Activity</h2>
       <ul id="history-list" class="history-list">
         <li class="empty-state">Loading...</li>
       </ul>
     </section>
 
-    <!-- Diagnostics Section -->
-    <header class="toolbar">
-      <h2>Status</h2>
-    </header>
-
-    <section class="card">
-      <div id="status" class="status">Ready</div>
-    </section>
+    <!-- Status Bar - Fixed at bottom -->
+    <footer class="status-bar">
+      <span id="status" class="status">Ready</span>
+    </footer>
   </div>
 
   <!-- Refill Dialog -->
   <dialog id="refill-dialog">
     <form method="dialog">
       <h3>Record Refill</h3>
+      <p class="dialog-hint">How much water did you add?</p>
+      <div class="volume-presets">
+        <button type="button" class="btn btn-preset" data-preset="2000">2L</button>
+        <button type="button" class="btn btn-preset" data-preset="5000">5L</button>
+        <button type="button" class="btn btn-preset" data-preset="10000">10L</button>
+      </div>
       <label>
-        <span>Volume (ml)</span>
-        <input type="number" id="refill-volume" min="100" max="10000" step="100" value="5000" required>
+        <span>Custom amount (ml)</span>
+        <input type="number" id="refill-volume" inputmode="numeric" pattern="[0-9]*"
+               min="100" max="20000" step="100" value="5000" required>
       </label>
       <div class="dialog-actions">
-        <button type="button" class="btn" id="dialog-cancel">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-large" id="dialog-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-large">Save</button>
       </div>
     </form>
   </dialog>
