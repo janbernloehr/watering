@@ -1,5 +1,7 @@
 version: 2
 updates:
+  # Note: Dependabot doesn't have native uv support yet, but the "pip" ecosystem
+  # works with pyproject.toml files which uv uses. Dependencies are read correctly.
   - package-ecosystem: "pip"
     directory: "/"
     schedule:

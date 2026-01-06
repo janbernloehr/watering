@@ -63,16 +63,18 @@ class TestWateringController:
         assert controller._initialized
         assert hardware_config.watering_pin in mock_gpio._output_pins
 
-    def test_water(self, watering_controller: WateringController):
+    async def test_water(self, watering_controller: WateringController):
         """Test watering operation."""
-        duration = watering_controller.water(125)
+        duration = await watering_controller.water(125)
 
         assert duration == pytest.approx(10.0, rel=0.1)
 
-    def test_water_auto_initializes(self, hardware_config: HardwareConfig, mock_gpio: MockGPIO):
+    async def test_water_auto_initializes(
+        self, hardware_config: HardwareConfig, mock_gpio: MockGPIO
+    ):
         """Test that water() auto-initializes if needed."""
         controller = WateringController(hardware_config, mock_gpio)
         assert not controller._initialized
 
-        controller.water(125)
+        await controller.water(125)
         assert controller._initialized

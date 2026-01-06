@@ -1,6 +1,6 @@
 """Hardware control for the watering system."""
 
-import time
+import asyncio
 from abc import ABC, abstractmethod
 from typing import Protocol
 
@@ -141,7 +141,7 @@ class WateringController:
         self._gpio.write_low(self._config.watering_pin)
         self._initialized = True
 
-    def water(self, volume_ml: int) -> float:
+    async def water(self, volume_ml: int) -> float:
         """
         Activate pump for the specified volume.
 
@@ -158,7 +158,7 @@ class WateringController:
 
         self._gpio.write_high(self._config.watering_pin)
         try:
-            time.sleep(duration)
+            await asyncio.sleep(duration)
         finally:
             self._gpio.write_low(self._config.watering_pin)
 

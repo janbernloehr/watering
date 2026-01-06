@@ -39,7 +39,7 @@ async def water_plants(
     controller: Annotated["WateringController", Depends(get_controller)],
 ) -> WaterResponse:
     """Water plants with the specified volume."""
-    duration = controller.water(volume)
+    duration = await controller.water(volume)
     database.record_watering(volume, config.default_user)
 
     return WaterResponse(volume=volume, duration=round(duration, 2))
