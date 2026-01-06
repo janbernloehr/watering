@@ -45,14 +45,14 @@ class WateringDatabase:
             fillings.insert({"filldate": now, "user": user, "quantity": quantity})
         return FillingRecord(id=None, filldate=now, user=user, quantity=quantity)
 
-    def get_history(self) -> WateringHistory | None:
+    def get_history(self) -> WateringHistory:
         """Get watering history since the last fill."""
         with self._connection() as db:
             fillings = db["fillings"]
             last_filling_data = fillings.find_one(order_by="-filldate", _limit=1)
 
             if last_filling_data is None:
-                return None
+                return WateringHistory()
 
             last_filling = FillingRecord.from_dict(last_filling_data)
             waterings = db["waterings"]

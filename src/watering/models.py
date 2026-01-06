@@ -1,22 +1,22 @@
-"""Data models for the watering system."""
+"""Pydantic models for the watering system API."""
 
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Self
 
+from pydantic import BaseModel, Field
 
-@dataclass(frozen=True, slots=True)
-class WateringRecord:
+
+class WateringRecord(BaseModel):
     """Record of a watering event."""
 
-    id: int | None
+    id: int | None = None
     waterdate: datetime
     user: str
-    quantity: int
+    quantity: int = Field(gt=0, description="Volume in milliliters")
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
-        """Create a WateringRecord from a dictionary."""
+        """Create a WateringRecord from a database row."""
         return cls(
             id=data.get("id"),
             waterdate=data["waterdate"],
@@ -24,27 +24,18 @@ class WateringRecord:
             quantity=data["quantity"],
         )
 
-    def to_dict(self) -> dict:
-        """Convert to dictionary for JSON serialization."""
-        return {
-            "waterdate": self.waterdate.isoformat(),
-            "user": self.user,
-            "quantity": self.quantity,
-        }
 
-
-@dataclass(frozen=True, slots=True)
-class FillingRecord:
+class FillingRecord(BaseModel):
     """Record of a water can filling event."""
 
-    id: int | None
+    id: int | None = None
     filldate: datetime
     user: str
-    quantity: int
+    quantity: int = Field(gt=0, description="Volume in milliliters")
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
-        """Create a FillingRecord from a dictionary."""
+        """Create a FillingRecord from a database row."""
         return cls(
             id=data.get("id"),
             filldate=data["filldate"],
@@ -52,27 +43,32 @@ class FillingRecord:
             quantity=data["quantity"],
         )
 
-    def to_dict(self) -> dict:
-        """Convert to dictionary for JSON serialization."""
-        return {
-            "filldate": self.filldate.isoformat(),
-            "user": self.user,
-            "quantity": self.quantity,
-        }
 
-
-@dataclass(frozen=True, slots=True)
-class WateringHistory:
+class WateringHistory(BaseModel):
     """Complete watering history since last fill."""
 
-    last_filling: FillingRecord
-    remaining: int
-    history: list[WateringRecord]
+    last_filling: FillingRecord | None = None
+    remaining: int = 0
+    history: list[WateringRecord] = Field(default_factory=list)
 
-    def to_dict(self) -> dict:
-        """Convert to dictionary for JSON serialization."""
-        return {
-            "last_filling": self.last_filling.to_dict(),
-            "remaining": self.remaining,
-            "history": [record.to_dict() for record in self.history],
-        }
+
+# API Response Models
+class WaterResponse(BaseModel):
+    """Response for watering action."""
+
+    action: str = "water"
+    volume: int
+    duration: float
+
+
+class FillResponse(BaseModel):
+    """Response for fill action."""
+
+    action: str = "record_filling"
+    volume: int
+
+
+class ErrorResponse(BaseModel):
+    """Error response."""
+
+    error: str

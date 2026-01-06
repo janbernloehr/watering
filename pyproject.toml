@@ -19,9 +19,10 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "falcon>=4.0.2",
+    "fastapi>=0.115.6",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.4",
     "dataset>=1.6.2",
-    "gunicorn>=23.0.0",
     "rpi-lgpio>=0.6; platform_machine == 'aarch64' or platform_machine == 'armv7l'",
 ]
 

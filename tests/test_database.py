@@ -26,7 +26,11 @@ class TestWateringDatabase:
     def test_get_history_empty(self, database: WateringDatabase):
         """Test getting history when no fillings exist."""
         history = database.get_history()
-        assert history is None
+
+        assert isinstance(history, WateringHistory)
+        assert history.last_filling is None
+        assert history.remaining == 0
+        assert history.history == []
 
     def test_get_history_with_data(self, database: WateringDatabase):
         """Test getting history with filling and waterings."""
@@ -36,8 +40,8 @@ class TestWateringDatabase:
 
         history = database.get_history()
 
-        assert history is not None
         assert isinstance(history, WateringHistory)
+        assert history.last_filling is not None
         assert history.last_filling.quantity == 2000
         assert history.remaining == 1600  # 2000 - 250 - 150
         assert len(history.history) == 2
@@ -52,7 +56,7 @@ class TestWateringDatabase:
 
         history = database.get_history()
 
-        assert history is not None
+        assert history.last_filling is not None
         assert history.last_filling.quantity == 2000
         assert history.remaining == 1700  # 2000 - 300
         assert len(history.history) == 1
