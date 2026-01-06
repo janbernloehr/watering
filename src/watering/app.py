@@ -1,14 +1,19 @@
 """FastAPI application module."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from watering.config import Config, get_config
 from watering.hardware import WateringController, create_gpio
 from watering.routes import get_controller, router
+
+# Path to web static files
+WEB_DIR = Path(__file__).parent.parent.parent / "web"
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -82,6 +87,10 @@ def create_app(
 
     # Include routes
     app.include_router(router)
+
+    # Serve static web files if the directory exists
+    if WEB_DIR.exists():
+        app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="static")
 
     return app
 
