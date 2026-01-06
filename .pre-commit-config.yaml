@@ -35,6 +35,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: uv-lock
+        name: uv lock check
+        entry: uv lock --check
+        language: system
+        pass_filenames: false
+        files: ^pyproject\.toml$
+
       - id: ty
         name: ty type check
         entry: uv run ty check src/
