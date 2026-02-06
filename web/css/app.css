@@ -1,0 +1,531 @@
+/* Mobile-First CSS for Watering App */
+
+:root {
+  --primary: #1976d2;
+  --primary-dark: #1565c0;
+  --primary-light: #42a5f5;
+  --surface: #ffffff;
+  --background: #f5f5f5;
+  --text: #212121;
+  --text-secondary: #757575;
+  --border: #e0e0e0;
+  --success: #4caf50;
+  --error: #f44336;
+  --warning: #ff9800;
+  --water: #29b6f6;
+  --water-dark: #0288d1;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.16);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base - Mobile optimized */
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+/* App Container */
+.app {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: calc(60px + var(--safe-bottom));
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Toolbar */
+.toolbar {
+  background: var(--primary);
+  color: white;
+  padding: calc(12px + var(--safe-top)) 20px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.toolbar h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  margin: 12px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.card h2 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.controls-card {
+  padding: 16px;
+}
+
+/* Button Grid - 2x2 for mobile */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* Watering Buttons - Large touch targets */
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.2s ease;
+  background: var(--border);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-water {
+  min-height: 80px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+
+.btn-water .btn-volume {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.btn-water .btn-unit {
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:active {
+  background: var(--primary-dark);
+}
+
+.btn-large {
+  min-height: 52px;
+  padding: 14px 24px;
+  font-size: 1rem;
+}
+
+/* FAB Button */
+.btn-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn-fab:active {
+  transform: scale(0.94);
+  box-shadow: var(--shadow);
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Tank Section */
+.tank-card {
+  padding: 16px;
+}
+
+.tank-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tank-header h2 {
+  margin-bottom: 0;
+}
+
+.tank-status {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.tank-visual {
+  position: relative;
+  width: 80px;
+  height: 100px;
+  background: var(--border);
+  border-radius: 8px 8px 16px 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tank-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, var(--water-dark), var(--water));
+  transition: height 0.5s ease;
+  height: 0%;
+}
+
+.tank-level {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.tank-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tank-remaining {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tank-date {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* History List */
+.history-list {
+  list-style: none;
+  margin: 0 -16px;
+}
+
+.history-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-list li:last-child {
+  border-bottom: none;
+}
+
+.history-list .quantity {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.history-list .time {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.empty-state {
+  color: var(--text-secondary);
+  font-style: italic;
+  justify-content: center !important;
+  padding: 24px 16px !important;
+}
+
+/* Status Bar - Fixed bottom */
+.status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px calc(12px + var(--safe-bottom));
+  z-index: 100;
+}
+
+.status {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+.status.error {
+  color: var(--error);
+  font-weight: 500;
+}
+
+.status.success {
+  color: var(--success);
+  font-weight: 500;
+}
+
+/* Dialog - Mobile optimized */
+dialog {
+  border: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  padding-bottom: calc(24px + var(--safe-bottom));
+  width: 100%;
+  max-width: 100%;
+  max-height: 90vh;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+dialog[open] {
+  transform: translateY(0);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+dialog h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.dialog-hint {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+/* Volume presets */
+.volume-presets {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-preset {
+  flex: 1;
+  min-height: 52px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  background: var(--background);
+  border: 2px solid var(--border);
+}
+
+.btn-preset:active,
+.btn-preset.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+dialog label {
+  display: block;
+  margin-bottom: 24px;
+}
+
+dialog label span {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+dialog input {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+dialog input:focus {
+  border-color: var(--primary);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.dialog-actions .btn {
+  flex: 1;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1e1e1e;
+    --background: #121212;
+    --text: #f5f5f5;
+    --text-secondary: #a0a0a0;
+    --border: #333333;
+    --water: #4fc3f7;
+    --water-dark: #0288d1;
+  }
+
+  .toolbar {
+    background: #1565c0;
+  }
+
+  dialog {
+    background: var(--surface);
+  }
+
+  .btn-preset {
+    background: var(--background);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  .status-bar {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+}
+
+/* Tablet/Desktop */
+@media (min-width: 600px) {
+  .app {
+    padding-top: 20px;
+  }
+
+  .card {
+    margin: 16px;
+    padding: 20px;
+  }
+
+  .button-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .btn-water {
+    min-height: 100px;
+  }
+
+  dialog {
+    border-radius: var(--radius-lg);
+    max-width: 400px;
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0;
+    padding-bottom: 24px;
+  }
+
+  dialog[open] {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

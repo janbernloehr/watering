@@ -1,125 +1,113 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="wateringApp">
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1976d2">
+  <meta name="description" content="Smart plant watering control">
 
   <title>Watering</title>
 
+  <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon-iphone.png">
-  <link rel="icon" href="favicon.ico" type="image/vnd.microsoft.icon">
-
-  <!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">-->
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
-  <link rel="stylesheet" href="css/site.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-        rel="stylesheet">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/app.css">
 </head>
 
-<body ng-controller="WateringController as waterCtl" ng-cloak>
-  <div class="watering-app">
-    <md-content>
-      <md-toolbar class="md-theme-light">
-        <h2 class="md-toolbar-tools">
-          <span>Watering v0.2.1</span>
-        </h2>
-      </md-toolbar>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="toolbar">
+      <h1>🌱 Watering</h1>
+    </header>
 
-      <md-content>
-        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap ng-show="!waterCtl.isWatering" class="md-padding">
-          <md-button ng-click="waterCtl.waterFor(100)" class="md-raised md-primary">water 100ml</md-button>
-          <md-button ng-click="waterCtl.waterFor(250)" class="md-raised md-primary">water 250ml</md-button>
-          <md-button ng-click="waterCtl.waterFor(500)" class="md-raised md-primary">water 500ml</md-button>
-          <md-button ng-click="waterCtl.waterFor(1000)" class="md-raised md-primary">water 1000ml</md-button>
-        </section>
+    <!-- Watering Controls - Primary action area at top for thumb reach -->
+    <section class="card controls-card">
+      <div id="controls" class="button-grid">
+        <button class="btn btn-primary btn-water" data-volume="100">
+          <span class="btn-volume">100</span>
+          <span class="btn-unit">ml</span>
+        </button>
+        <button class="btn btn-primary btn-water" data-volume="250">
+          <span class="btn-volume">250</span>
+          <span class="btn-unit">ml</span>
+        </button>
+        <button class="btn btn-primary btn-water" data-volume="500">
+          <span class="btn-volume">500</span>
+          <span class="btn-unit">ml</span>
+        </button>
+        <button class="btn btn-primary btn-water" data-volume="1000">
+          <span class="btn-volume">1000</span>
+          <span class="btn-unit">ml</span>
+        </button>
+      </div>
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <span>Watering...</span>
+      </div>
+    </section>
 
-        <div ng-show="waterCtl.isWatering" layout="row" layout-sm="column" layout-align="space-around" class="md-padding">
-          <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    <!-- Tank Status - Visual water level -->
+    <section class="card tank-card">
+      <div class="tank-header">
+        <h2>Water Tank</h2>
+        <button id="refill-btn" class="btn-fab" title="Record refill" aria-label="Record refill">
+          <svg viewBox="0 0 24 24" width="28" height="28">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+        </button>
+      </div>
+      <div id="tank-status" class="tank-status">
+        <div class="tank-visual">
+          <div id="tank-fill" class="tank-fill"></div>
+          <div class="tank-level" id="tank-level">--</div>
         </div>
-      </md-content>
+        <div class="tank-info">
+          <p class="tank-remaining" id="tank-remaining">Loading...</p>
+          <p class="tank-date" id="tank-date"></p>
+        </div>
+      </div>
+    </section>
 
-      <md-toolbar class="md-theme-light">
-        <h2 class="md-toolbar-tools">
-          <span>History</span>
-        </h2>
-      </md-toolbar>
-      <md-content>
-        <md-list>
+    <!-- Recent Activity -->
+    <section class="card">
+      <h2>Recent Activity</h2>
+      <ul id="history-list" class="history-list">
+        <li class="empty-state">Loading...</li>
+      </ul>
+    </section>
 
-          <md-subheader class="md-no-sticky">Last refill</md-subheader>
-
-          <md-list-item class="md-2-line">
-            <div class="md-list-item-text">
-              <h3>{{waterCtl.history.last_filling.filldate | momentFromNow}}</h3>
-              <p>
-                {{waterCtl.history.remaining}}ml of {{waterCtl.history.last_filling.quantity}}ml remaining
-                <br />
-                <md-progress-linear md-mode="determinate" value="{{waterCtl.history.remaining/5000*100}}"></md-progress-linear>
-              </p>
-              <md-icon ng-click="waterCtl.recordRefill($event)" aria-label="Set Refill" class="md-secondary md-hue-3">
-                add box
-              </md-icon>
-            </div>
-          </md-list-item>
-
-          <md-subheader class="md-no-sticky">Waterings</md-subheader>
-
-          <md-list-item class="md-2-line" ng-repeat="model in waterCtl.history.history">
-            <div class="md-list-item-text">
-              <h3>{{model.quantity}} ml</h3>
-              <p>{{model.waterdate | momentFromNow}}</p>
-            </div>
-          </md-list-item>
-
-          <md-divider></md-divider>
-
-        </md-list>
-      </md-content>
-
-      <md-toolbar class="md-theme-light">
-        <h2 class="md-toolbar-tools">
-          <span>Diagnostics</span>
-        </h2>
-      </md-toolbar>
-
-      <md-content>
-        <md-list>
-          <md-list-item class="md-2-line">
-            <div class="md-list-item-text">
-              <p>
-                {{waterCtl.error}}
-              </p>
-            </div>
-          </md-list-item>
-        </md-list>
-      </md-content>
-
-    </md-content>
-
+    <!-- Status Bar - Fixed at bottom -->
+    <footer class="status-bar">
+      <span id="status" class="status">Ready</span>
+    </footer>
   </div>
 
+  <!-- Refill Dialog -->
+  <dialog id="refill-dialog">
+    <form method="dialog">
+      <h3>Record Refill</h3>
+      <p class="dialog-hint">How much water did you add?</p>
+      <div class="volume-presets">
+        <button type="button" class="btn btn-preset" data-preset="2000">2L</button>
+        <button type="button" class="btn btn-preset" data-preset="5000">5L</button>
+        <button type="button" class="btn btn-preset" data-preset="10000">10L</button>
+      </div>
+      <label>
+        <span>Custom amount (ml)</span>
+        <input type="number" id="refill-volume" inputmode="numeric" pattern="[0-9]*"
+               min="100" max="20000" step="100" value="5000" required>
+      </label>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-large" id="dialog-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-large">Save</button>
+      </div>
+    </form>
+  </dialog>
 
-  <!-- Angular Material requires Angular.js Libraries -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
-
-  <!-- Angular Material Library -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-
-  <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
-
-  <script src="js/app.js"></script>
-
+  <script src="js/app.js" type="module"></script>
 </body>
-
 </html>

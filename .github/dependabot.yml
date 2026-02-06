@@ -1,0 +1,34 @@
+version: 2
+updates:
+  # Note: Dependabot doesn't have native uv support yet, but the "pip" ecosystem
+  # works with pyproject.toml files which uv uses. Dependencies are read correctly.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "janbernloehr"
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "ruff"
+          - "ty"
+      astral-tools:
+        patterns:
+          - "ruff"
+          - "ty"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"

@@ -1,109 +1,316 @@
-var app = angular.module('wateringApp', ['ngMaterial', 'ngMessages', 'material.svgAssetsCache']);
+/**
+ * Watering App - Mobile-First Vanilla JavaScript
+ * A lightweight PWA for smart plant watering control
+ */
 
-app.config(function ($mdThemingProvider) {
-    $mdThemingProvider.theme('default')
-        .primaryPalette('blue')
-        .accentPalette('red');
-});
+const API_BASE = "/watering.api";
+const MAX_TANK_ML = 5000;
 
-app.filter("momentFromNow", function () {
-    return function (input) {
-        console.log(input + "Z");
-        return moment(input + "Z").fromNow();
+// DOM Elements
+const elements = {
+  controls: document.getElementById("controls"),
+  loading: document.getElementById("loading"),
+  tankFill: document.getElementById("tank-fill"),
+  tankLevel: document.getElementById("tank-level"),
+  tankRemaining: document.getElementById("tank-remaining"),
+  tankDate: document.getElementById("tank-date"),
+  historyList: document.getElementById("history-list"),
+  status: document.getElementById("status"),
+  refillBtn: document.getElementById("refill-btn"),
+  refillDialog: document.getElementById("refill-dialog"),
+  refillVolume: document.getElementById("refill-volume"),
+  dialogCancel: document.getElementById("dialog-cancel"),
+  presetButtons: document.querySelectorAll("[data-preset]"),
+};
+
+// State
+let isWatering = false;
+
+/**
+ * Format a date as relative time (e.g., "5 minutes ago")
+ */
+function formatRelativeTime(dateString) {
+  const date = new Date(dateString + "Z"); // Assume UTC
+  const now = new Date();
+  const diffMs = now - date;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+  if (diffSec < 60) return rtf.format(-diffSec, "second");
+  if (diffMin < 60) return rtf.format(-diffMin, "minute");
+  if (diffHour < 24) return rtf.format(-diffHour, "hour");
+  if (diffDay < 30) return rtf.format(-diffDay, "day");
+
+  return date.toLocaleDateString();
+}
+
+/**
+ * Update status message
+ */
+function setStatus(message, type = "info") {
+  elements.status.textContent = message;
+  elements.status.className = `status ${type}`;
+}
+
+/**
+ * Show/hide loading state
+ */
+function setLoading(loading) {
+  isWatering = loading;
+  elements.controls.classList.toggle("hidden", loading);
+  elements.loading.classList.toggle("hidden", !loading);
+
+  // Disable all buttons while loading
+  document.querySelectorAll(".btn").forEach((btn) => {
+    btn.disabled = loading;
+  });
+}
+
+/**
+ * Trigger haptic feedback if available
+ */
+function haptic(type = "light") {
+  if ("vibrate" in navigator) {
+    const patterns = {
+      light: [10],
+      medium: [20],
+      heavy: [30],
+      success: [10, 50, 10],
+      error: [50, 30, 50],
+    };
+    navigator.vibrate(patterns[type] || patterns.light);
+  }
+}
+
+/**
+ * Fetch history from API
+ */
+async function fetchHistory() {
+  try {
+    const response = await fetch(`${API_BASE}/history`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = await response.json();
+    renderHistory(data);
+    setStatus("Ready");
+  } catch (error) {
+    console.error("Failed to fetch history:", error);
+    setStatus(`Error: ${error.message}`, "error");
+    renderEmptyHistory();
+  }
+}
+
+/**
+ * Render history data
+ */
+function renderHistory(data) {
+  // Tank status
+  if (data.last_filling) {
+    const remaining = data.remaining || 0;
+    const total = data.last_filling.quantity || MAX_TANK_ML;
+    const percent = Math.max(0, Math.min(100, (remaining / MAX_TANK_ML) * 100));
+
+    elements.tankFill.style.height = `${percent}%`;
+    elements.tankLevel.textContent = `${Math.round(percent)}%`;
+    elements.tankRemaining.textContent = `${remaining.toLocaleString()}ml remaining`;
+    elements.tankDate.textContent = `Filled ${formatRelativeTime(data.last_filling.filldate)}`;
+  } else {
+    elements.tankFill.style.height = "0%";
+    elements.tankLevel.textContent = "--";
+    elements.tankRemaining.textContent = "No refills yet";
+    elements.tankDate.textContent = "Tap + to record a refill";
+  }
+
+  // Watering history
+  const list = elements.historyList;
+  if (data.history && data.history.length > 0) {
+    list.innerHTML = data.history
+      .slice(0, 10) // Limit to 10 most recent
+      .map(
+        (item) => `
+        <li>
+          <span class="quantity">${item.quantity}ml</span>
+          <span class="time">${formatRelativeTime(item.waterdate)}</span>
+        </li>
+      `
+      )
+      .join("");
+  } else {
+    list.innerHTML = '<li class="empty-state">No recent waterings</li>';
+  }
+}
+
+/**
+ * Render empty history state
+ */
+function renderEmptyHistory() {
+  elements.tankFill.style.height = "0%";
+  elements.tankLevel.textContent = "--";
+  elements.tankRemaining.textContent = "Unable to load";
+  elements.tankDate.textContent = "";
+  elements.historyList.innerHTML =
+    '<li class="empty-state">Unable to load history</li>';
+}
+
+/**
+ * Trigger watering
+ */
+async function water(volume) {
+  if (isWatering) return;
+
+  haptic("medium");
+  setLoading(true);
+  setStatus(`Watering ${volume}ml...`);
+
+  try {
+    const response = await fetch(`${API_BASE}/water/${volume}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = await response.json();
+    haptic("success");
+    setStatus(`✓ Watered ${data.volume}ml`, "success");
+    await fetchHistory();
+  } catch (error) {
+    console.error("Watering failed:", error);
+    haptic("error");
+    setStatus(`Error: ${error.message}`, "error");
+  } finally {
+    setLoading(false);
+  }
+}
+
+/**
+ * Record a refill
+ */
+async function recordRefill(volume) {
+  setStatus(`Recording ${volume}ml refill...`);
+
+  try {
+    const response = await fetch(`${API_BASE}/fill/${volume}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    haptic("success");
+    setStatus(`✓ Refill recorded`, "success");
+    await fetchHistory();
+  } catch (error) {
+    console.error("Refill failed:", error);
+    haptic("error");
+    setStatus(`Error: ${error.message}`, "error");
+  }
+}
+
+/**
+ * Open refill dialog
+ */
+function openRefillDialog() {
+  haptic("light");
+  elements.refillVolume.value = MAX_TANK_ML;
+
+  // Clear preset selection
+  elements.presetButtons.forEach((btn) => btn.classList.remove("active"));
+
+  elements.refillDialog.showModal();
+}
+
+/**
+ * Handle preset button click
+ */
+function handlePreset(volume) {
+  haptic("light");
+  elements.refillVolume.value = volume;
+
+  // Update visual selection
+  elements.presetButtons.forEach((btn) => {
+    btn.classList.toggle("active", parseInt(btn.dataset.preset, 10) === volume);
+  });
+}
+
+/**
+ * Initialize event listeners
+ */
+function initEventListeners() {
+  // Watering buttons
+  elements.controls.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-volume]");
+    if (btn && !btn.disabled) {
+      const volume = parseInt(btn.dataset.volume, 10);
+      water(volume);
     }
+  });
+
+  // Refill FAB button
+  elements.refillBtn.addEventListener("click", openRefillDialog);
+
+  // Preset buttons
+  elements.presetButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const volume = parseInt(btn.dataset.preset, 10);
+      handlePreset(volume);
+    });
+  });
+
+  // Dialog cancel
+  elements.dialogCancel.addEventListener("click", () => {
+    elements.refillDialog.close();
+  });
+
+  // Dialog form submit
+  const form = elements.refillDialog.querySelector("form");
+  form.addEventListener("submit", (e) => {
+    const volume = parseInt(elements.refillVolume.value, 10);
+    if (volume > 0) {
+      recordRefill(volume);
+    }
+  });
+
+  // Close dialog on backdrop click
+  elements.refillDialog.addEventListener("click", (e) => {
+    if (e.target === elements.refillDialog) {
+      elements.refillDialog.close();
+    }
+  });
+
+  // Pull to refresh (simple implementation)
+  let touchStartY = 0;
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      touchStartY = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchend",
+    (e) => {
+      const touchEndY = e.changedTouches[0].clientY;
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
+      if (scrollTop === 0 && touchEndY - touchStartY > 100) {
+        haptic("light");
+        fetchHistory();
+      }
+    },
+    { passive: true }
+  );
+}
+
+// Initialize app
+document.addEventListener("DOMContentLoaded", () => {
+  initEventListeners();
+  fetchHistory();
+
+  // Refresh history periodically (every 30 seconds)
+  setInterval(fetchHistory, 30000);
 });
 
-app.controller('WateringController', function ($http, $scope, $rootScope, $location, $mdDialog, $mdMedia) {
-    
-    var self = this;
-
-    $rootScope.rx = self;
-
-    self.count = 0;
-    self.local_status = "initialized";
-    self.remote_status = "none";
-    self.error = "";
-    self.mode = "none";
-    self.isError = false;
-
-    self.isWatering = false;
-
-    self.baseurl = "/watering.api/";
-
-    self.waterFor = function (duration) {
-        self.isWatering = true;
-
-        $http.get(self.baseurl + "water/" + duration)
-            .then(function successCallback(response) {
-                self.error = response.data;
-                self.isError = false;
-                self.isWatering = false;
-                self.getHistory();
-            }, function errorCallback(response) {
-                self.error = response;
-                self.isError = true;
-                self.isWatering = false;
-            });
-    };
-
-    self.recordRefill = function (event) {
-        //var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-        $mdDialog.show({
-            controller: DialogController,
-            templateUrl: 'refill.dialog.html',
-            parent: angular.element(document.body),
-            targetEvent: event,
-            clickOutsideToClose: true,
-            fullscreen: false
-        })
-            .then(function (answer) {
-                $scope.status = 'You said the information was "' + answer + '".';
-            }, function () {
-                $scope.status = 'You cancelled the dialog.';
-            });
-        /*$scope.$watch(function() {
-          return $mdMedia('xs') || $mdMedia('sm');
-        }, function(wantsFullScreen) {
-          $scope.customFullscreen = (wantsFullScreen === true);
-        });*/
-    };
-
-    self.getHistory = function () {
-        $http.get(self.baseurl + "history")
-            .then(function successCallback(response) {
-                self.history = response.data;
-            }, function errorCallback(response) {
-                self.error = response;
-            });
-    };
-
-    self.refill = function (volume) {
-        $http.get(self.baseurl + "refill/" + volume)
-            .then(function successCallback(response) {
-                self.getHistory();
-            }, function errorCallback(response) {
-                self.error = response;
-            });
-
-    };
-
-    self.getHistory();
-});
-
-function DialogController($scope, $mdDialog, $rootScope) {
-    self = this;
-    $scope.hide = function () {
-        $mdDialog.hide();
-    };
-    $scope.cancel = function () {
-        $mdDialog.cancel();
-    };
-    $scope.save = function () {
-        $rootScope.rx.refill($scope.bag.refillVolume);
-
-        $mdDialog.hide();
-    };
-    $scope.bag = {
-        refillVolume: null
-    };
+// Register service worker for PWA
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {
+    // Service worker registration failed, app works without it
+  });
 }

@@ -1,0 +1,19 @@
+{
+  "name": "Watering",
+  "short_name": "Watering",
+  "description": "Smart plant watering control",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f5f5",
+  "theme_color": "#1976d2",
+  "icons": [
+    {
+      "src": "apple-touch-icon-iphone.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "lifestyle"]
+}
