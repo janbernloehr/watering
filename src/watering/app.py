@@ -101,7 +101,7 @@ app = create_app(use_mock_gpio=True)
 
 def main() -> None:
     """Run development server."""
-    import uvicorn  # noqa: PLC0415
+    import uvicorn
 
     uvicorn.run(
         "watering.app:app",
