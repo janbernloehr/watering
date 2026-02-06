@@ -88,7 +88,7 @@ class RpiGPIO(BaseGPIO):
     def setup(self) -> None:
         """Initialize GPIO using BCM mode."""
         try:
-            from RPi import GPIO  # ty: ignore[unresolved-import]
+            from RPi import GPIO  # noqa: PLC0415  # ty: ignore[unresolved-import]
 
             GPIO.setmode(GPIO.BCM)
             self._gpio = GPIO
