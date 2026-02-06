@@ -1,4 +1,4 @@
-# Watering #
+# Watering
 
 Simple App for watering my balcony plants
 
@@ -15,11 +15,10 @@ The python backend is run by gunicorn which is fired up by supervisor.
 
     sudo apt-get install python python-pip supervisor
     sudo pip install gunicorn falcon wiringpi
-  
 
-`/etc/supervisor/conf.d/watering.conf` 
+`/etc/supervisor/conf.d/watering.conf`
 
-````
+```
 [program:watering]
 command=/usr/local/bin/gunicorn -b '0.0.0.0:8087' --timeout 3600 water:app
 directory=/home/janm/watering/py
@@ -28,15 +27,15 @@ autostart=true
 autorestart=true
 stderr_logfile=/var/log/watering.err.log
 stdout_logfile=/var/log/watering.out.log
-````
+```
 
 The angular frontend and the REST interface run by gunicorn are served by nginx.
 
     sudo apt-get install nginx
-    
+
 `/etc/nginx/sites-available/default`
 
-````
+```
 upstream app_server {
     # fail_timeout=0 means we always retry an upstream even if it failed
     # to return a good HTTP response
@@ -70,4 +69,4 @@ server {
 		send_timeout                3600;
   }
 }
-````
+```
